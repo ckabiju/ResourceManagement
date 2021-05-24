@@ -30,8 +30,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Resource
 	private JwtTokenUtil tokenUtil;
 
-	private static final String[] AUTH_WHITELIST = { "/v2/api-docs", "/swagger-resources", "/swagger-resources/**",
-			"/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**" };
+	private static final String[] AUTH_WHITELIST = { "/v2/api-docs", "/swagger-resources", "/swagger-resources/**","favicon.ico","/swagger.json",
+			"/configuration/ui", "/configuration/security", "/swagger-ui.html","/swagger-ui/index.html","/swagger-ui/**", "/webjars/**","/auth/v1/noAuthPing" };
 
 	/*
 	 * In method configure we have restricted most APIs, only allowing Swagger URLs
@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// This code creates rules that requires authentication for all endpoints except
 		// /registration and enables HTTP basic authentication.
 		httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
-				.antMatchers(HttpMethod.POST, "/v1/auth/signup").permitAll().anyRequest().authenticated().and()
+				.antMatchers(HttpMethod.POST, "/auth/v1/signup").permitAll().anyRequest().authenticated().and()
 				.addFilter(new AuthenticationFilter(authenticationManager(), tokenUtil))
 				.addFilter(new AuthorizationFilter(authenticationManager(), tokenUtil)).sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
