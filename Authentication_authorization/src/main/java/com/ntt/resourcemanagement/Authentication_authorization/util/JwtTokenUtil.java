@@ -1,9 +1,6 @@
 package com.ntt.resourcemanagement.Authentication_authorization.util;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
-import java.security.PrivateKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,24 +8,16 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.util.io.pem.PemReader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import com.ntt.resourcemanagement.Authentication_authorization.model.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -37,7 +26,7 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+	public static  long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
 	private final String jwtSecret = "authenticationForResourceManagementauthenticationForResourceManagementauthenticationForResourceManagement";
     private final String jwtIssuer = "example.io";
@@ -82,6 +71,13 @@ public class JwtTokenUtil implements Serializable {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
+	
+	//generate token for user
+		public String generateToken(String userName, long validity) {
+			Map<String, Object> claims = new HashMap<>();
+			JWT_TOKEN_VALIDITY = validity;
+			return doGenerateToken(claims, userName);
+		}
 
 	//while creating the token -
 	//1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID

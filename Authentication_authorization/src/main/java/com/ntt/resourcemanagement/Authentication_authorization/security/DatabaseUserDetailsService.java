@@ -20,7 +20,10 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 		User user = userRepository.findByUserName(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
+		}else if (!user.isConfirmed()) {
+			throw new UsernameNotFoundException(username+" please verify your account by clicking the link in verification email you received.");
 		}
+		
 
 		UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(user.getUserName())
 				.password(user.getPassword()).authorities("USER").build();

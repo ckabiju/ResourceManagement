@@ -12,9 +12,12 @@ public class RegistrationService {
 	@Autowired
 	UserRepository userRepository;
 
-	public void signUp(User user) {
-		
-		userRepository.save(user);
+	public User signUp(User user) {
+		// Validate User details
+
+		// create a verificationToken
+		return userRepository.save(user);
+
 	}
 	
 	public boolean checkUserNameAvailability(String userName) {
