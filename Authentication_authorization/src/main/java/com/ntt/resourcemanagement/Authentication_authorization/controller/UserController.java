@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,9 @@ public class UserController {
 	
 	@Autowired
 	ApplicationEventPublisher eventPublisher;
-
+	
+	@Value("${send.verification.email}")
+	Boolean sendVerificationEmail;
 	
 	@PostMapping("/signup")
 	@ApiOperation(value = "User Registration",
@@ -48,9 +51,10 @@ public class UserController {
 		// Sendout email for account confirmation 
 		//-Which includes a confirmation link with the VerificationToken's value
 		 String appUrl = request.getContextPath();
-			
+			if(sendVerificationEmail) {
 			  eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user,
 			  request.getLocale(), appUrl));
+			}
 	}
 	
 	@PostMapping("/checkUserNameAvailability")
