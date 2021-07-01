@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,9 @@ import com.ntt.resourcemanagement.Authentication_authorization.registration.OnRe
 import com.ntt.resourcemanagement.Authentication_authorization.service.RegistrationService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 
 @CrossOrigin("http://localhost:8080")
 @RestController
@@ -43,18 +47,35 @@ public class UserController {
 			notes = "Validates the user details and register the user. Also sends out confirmation email to the registered email id."
 			//response =""
 			)
-	public void signUp(
-			@RequestBody UserDto userDto, HttpServletRequest request) {
+	public void signUp (
+			@RequestBody UserDto userDto, HttpServletRequest request) throws Exception {
 		User user = modelMapper.map(userDto, User.class);
-		user = registrationService.signUp(user);
 		
-		// Sendout email for account confirmation 
-		//-Which includes a confirmation link with the VerificationToken's value
-		 String appUrl = request.getContextPath();
+		try {
+			user = registrationService.signUp(user);
+			
+			// Sendout email for account confirmation 
+			//-Which includes a confirmation link with the VerificationToken's value
+			String appUrl = request.getContextPath();
+			 
 			if(sendVerificationEmail) {
 			  eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user,
 			  request.getLocale(), appUrl));
 			}
+		} catch (DuplicateKeyException dke) {
+			String msg = dke.getMessage();
+			
+			throw dke;
+			/*
+			if (msg.contains("user_email")) {
+				log.error("**** The e-mail address '" + user.getEmail() + "' is already defined for another user");
+			} else if (msg.contains("user_username")) {
+				log.error("**** The user name '" + user.getUserName() + "' is already in use");
+			} else {
+				log.error(dke.getMessage());
+			}
+			*/
+		}
 	}
 	
 	@PostMapping("/checkUserNameAvailability")

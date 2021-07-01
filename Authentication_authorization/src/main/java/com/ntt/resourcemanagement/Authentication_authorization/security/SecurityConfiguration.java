@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// This code creates rules that requires authentication for all endpoints except
 		// /registration and enables HTTP basic authentication.
 		httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
-				.antMatchers(HttpMethod.POST, "/auth/v1/signup").permitAll().anyRequest().authenticated().and()
+				.antMatchers(HttpMethod.POST, "/auth/v1/signup", "/auth/v1/confirmEmail").permitAll().anyRequest().authenticated().and()
 				.addFilter(new AuthenticationFilter(authenticationManager(), tokenUtil))
 				.addFilter(new AuthorizationFilter(authenticationManager(), tokenUtil)).sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
